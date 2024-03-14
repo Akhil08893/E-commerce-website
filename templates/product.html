@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+<section style="background-color: #eee;">
+    <div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6 col-xl-4">
+        <div class="card text-black">
+            <img src="{{ product.image.url }}"
+            class="card-img-top" alt="Apple Computer" />
+            <div class="card-body">
+            <div class="text-center">
+                <h5 class="card-title"> {{ product.product_name }} </h5>
+                <p class="text-muted mb-4"> {{ product.category }} </p>
+            </div>
+            <div>
+                <h5 class="card-title"> Description: </h5>
+                <div class="text-center">
+                <p class="text-muted mb-4"> {{ product.description }} </p>
+                </div>
+            </div>
+            {% if product.is_sale %}
+            <div class="d-flex justify-content-between total font-weight-bold mt-4">
+                <span>Total Price:</span><span><strike>${{ product.price }}</strike> &nbsp ${{ product.sale_price }} </span>
+            </div>
+            {% else %}
+            <div class="d-flex justify-content-between total font-weight-bold mt-4">
+                <span>Total Price: </span><span>${{ product.price }} </span>
+            </div>
+            {% endif %}
+            <br><br>
+            <div class='text-center'>
+            <a href="{% url 'home' %}" class='btn btn-secondary'>Home</a>
+            &nbsp &nbsp
+            <button  type="button" value="{{product.id}}" class='btn btn-secondary' id="add-cart">Add Product</button>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+</section>
+
+<script>
+
+    $(document).on('click','#add-cart',function(e){
+        e.preventDefault();
+        $.ajax({
+            type:'POST',
+            url: '{% url 'cart_add' %}',
+            data:{
+                product_id: $('#add-cart').val(),
+                csrfmiddlewaretoken : '{{ csrf_token }}',
+                action: 'post'
+            },
+            success: function(json){
+                //console.log(json)
+                document.getElementById("card_quantity").textContent=json.qty
+            },
+            error: function(xhr,errmsg,err){
+            }
+        });
+
+    })
+</script>
+
+
+{% endblock %}

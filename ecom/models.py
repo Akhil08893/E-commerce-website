@@ -3,6 +3,9 @@ from django.db import models
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=50)
+    
+    class Meta:
+        verbose_name_plural = 'Categories'
 
 
 class Product(models.Model):
@@ -11,7 +14,8 @@ class Product(models.Model):
     description = models.CharField(max_length=150,null=True,default='',blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='uploads/product/')
-
+    is_sale = models.BooleanField(default=False)
+    sale_price = models.DecimalField(max_digits=6, decimal_places=2,default=0)
 
 class Customer(models.Model):
     first_name = models.CharField(max_length=50)
@@ -27,7 +31,6 @@ class Order(models.Model):
     address = models.CharField(max_length = 150)
     phone = models.CharField(max_length = 150)
     status = models.BooleanField(default=False)
-    data = models.DateField(auto_now=False, auto_now_add=True,blank=True)
-    
+    data = models.DateField(auto_now_add=True,blank=True)
     
     
