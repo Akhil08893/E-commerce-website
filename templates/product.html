@@ -10,8 +10,8 @@
         <div class="col-md-8 col-lg-6 col-xl-4">
         <div class="card text-black">
             <img src="{{ product.image.url }}"
-            class="card-img-top" alt="Apple Computer" />
-            <div class="card-body">
+            class="card-img-top" alt="" />
+            <div  class="card-body">
             <div class="text-center">
                 <h5 class="card-title"> {{ product.product_name }} </h5>
                 <p class="text-muted mb-4"> {{ product.category }} </p>
@@ -31,11 +31,24 @@
                 <span>Total Price: </span><span>${{ product.price }} </span>
             </div>
             {% endif %}
-            <br><br>
+            <br>
+            <div class="row justify-content-center ">
+                Quantity:
+                <div class="col-md-3">
+            <select class="form-select  form-select-sm" id="qty-cart">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            </div>
+        </div>
+            <br>
             <div class='text-center'>
             <a href="{% url 'home' %}" class='btn btn-secondary'>Home</a>
             &nbsp &nbsp
-            <button  type="button" value="{{product.id}}" class='btn btn-secondary' id="add-cart">Add Product</button>
+            <button  type="button" value="{{product.id}}" class='btn btn-secondary' id="add-cart">Add To Cart</button>
             </div>
             </div>
         </div>
@@ -53,12 +66,14 @@
             url: '{% url 'cart_add' %}',
             data:{
                 product_id: $('#add-cart').val(),
+                product_qty: $('#qty-cart option:selected').text(),
                 csrfmiddlewaretoken : '{{ csrf_token }}',
                 action: 'post'
             },
             success: function(json){
                 //console.log(json)
-                document.getElementById("card_quantity").textContent=json.qty
+                //document.getElementById("card_quantity").textContent=json.qty
+                location.reload()
             },
             error: function(xhr,errmsg,err){
             }
