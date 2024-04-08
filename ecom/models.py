@@ -12,6 +12,7 @@ class Profile(models.Model):
     state = models.CharField(max_length=20,blank = True)
     zipcode = models.CharField(max_length=20,blank = True)
     country = models.CharField(max_length=30,blank = True)
+    old_cart = models.CharField(max_length=30,blank = True,null=True)
 
 
 def create_profile(sender,instance,created, **kwargs):
@@ -42,7 +43,7 @@ class Customer(models.Model):
     last_name = models.CharField(max_length=50)
     email =  models.EmailField(max_length=254)
     phone = models.CharField(max_length=50)
-    passward = models.CharField(max_length=50)
+    password = models.CharField(max_length=50)
 
 
 class Order(models.Model):
@@ -52,4 +53,3 @@ class Order(models.Model):
     phone = models.CharField(max_length = 150)
     status = models.BooleanField(default=False)
     data = models.DateField(auto_now_add=True,blank=True)
-    

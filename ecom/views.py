@@ -5,6 +5,9 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from .forms import userProfile
 from django import forms
+from django.db.models import Q
+import json
+from cart.cart import Cart
 
 def home(request):
     product = Product.objects.all()
@@ -16,6 +19,17 @@ def home(request):
 
 def about(request):
     return render(request,'about.html',{})
+
+def search_product(request):
+    if request.method=="POST":
+        searched = request.POST['searched']
+        product = Product.objects.filter(product_name__icontains=searched)
+        if not product:
+            messages.success(request,f"product is not available...")
+            return redirect('home')
+        else:
+            return render(request,'index.html',{'product':product})
+
 
 def user_profile(request):
     if request.user.is_authenticated:
@@ -29,7 +43,7 @@ def user_profile(request):
         return render(request,'profile.html',{'current_user':current_user,'form':form})
     else:
         messages.success(request,'Please Login TO proceed')
-        return redirect('home')
+        return redirect('login')
 
 def change_password(request):
     if request.method == 'POST':
@@ -58,6 +72,14 @@ def login_user(request):
         user=authenticate(request,username=username,password = password)
         if user is not None:
             login(request,user)
+            
+            current_user = Profile.objects.get(user__id=request.user.id)
+            current_cart = current_user.old_cart
+            if current_cart:
+                saved_cart = json.loads(current_cart)
+                cart = Cart(request)
+                for key,value in saved_cart.items():
+                    cart.db_add(product=key,quantity=value)
             messages.success(request,'Welcome To Ecommerce Website..')
             return redirect('home')
         else:
